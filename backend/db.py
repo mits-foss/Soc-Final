@@ -59,11 +59,11 @@ def setup_database():
 def save_user_to_db(github_user, email, phone, token,SOCname):
     logging.debug(f"Checking if user exists: {github_user['login']}")
 
-def save_user_to_db(github_user, token):
     client.execute("""
-    INSERT OR REPLACE INTO users (github_id, name, email, token)
-    VALUES (?, ?, ?, ?)
-    """, (github_user['id'], github_user['login'], github_user.get('email', ''), token))
+INSERT OR REPLACE INTO users (github_id, name, email, phone_no, token)
+VALUES (?, ?, ?, ?, ?)
+""", (github_user['login'], SOCname, email, phone, token))
+
     
     client.commit()
 

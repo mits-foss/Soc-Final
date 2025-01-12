@@ -44,7 +44,7 @@ def callback():
         token = get_github_token(code)
         ensure_db_connection()  # Ensure db.client is valid before use
         github_user = fetch_github_user(db.client, token)
-        logging.debug(f"GitHub user response: {github_user}")
+        # logging.debug(f"GitHub user response: {github_user}")
 
         # Check if the user is already logged in (based on session)
         if 'github_id' in session and session['github_id'] == github_user['login']:
@@ -66,7 +66,7 @@ def callback():
         session['temp_user'] = github_user
         session['temp_token'] = token
         print(session)
-        return token
+        return render_template('email_phone_form.html', github_user=github_user)
 
     except Exception as e:
         logging.error(f"OAuth callback error: {str(e)}")
