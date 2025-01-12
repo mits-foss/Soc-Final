@@ -89,10 +89,9 @@ SQLITE_DB_PATH=./app.db
 /submit_user              [POST]   - Submits user data (email/phone) for new users  
 /dashboard                [GET]    - Fetches user-specific PR data and leaderboard  
 /leaderboard              [GET]    - Retrieves the top contributors  
-/random_api_key           [GET]    - Returns a random API key for rate limiting  
 /token_status             [GET]    - Lists all active GitHub tokens  
 /webhook                  [POST]   - Handles incoming GitHub webhooks for PRs  
-/refresh-tokens           [GET]    - Runs a function that will check users table, and remove tokens that dont have any connection in API_KEYS
+
 
 ---
 
@@ -105,12 +104,6 @@ CREATE TABLE users (
     email TEXT,  
     phone_no TEXT,  
     token TEXT NOT NULL  
-);  
-
--- API Keys Table
-CREATE TABLE api_keys (  
-    id INTEGER PRIMARY KEY,  
-    key TEXT NOT NULL UNIQUE  
 );  
 
 -- Pull Requests Table

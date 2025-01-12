@@ -29,7 +29,7 @@ def init_db():
 @app.route('/login')
 def login():
     link = get_github_login_url()
-    return link
+    return redirect(get_github_login_url())
 
 @app.route('/callback')
 def callback():
@@ -90,12 +90,6 @@ def submit_user():
         
         db.save_user_to_db(github_user, email, phone, token,SOCname)
         
-        db.client.execute("""
-        INSERT INTO api_keys (key)
-        VALUES (?)
-        ON CONFLICT(key) DO NOTHING
-        
-        """, (token,))
         db.client.commit()
 
         # Clear temp session data
