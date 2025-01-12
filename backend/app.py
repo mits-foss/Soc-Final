@@ -27,7 +27,10 @@ def init_db():
         app.db_initialized = True
 
 @app.route('/login')
+
 def login():
+    db.setup_database()
+
     link = get_github_login_url()
     return redirect(get_github_login_url())
 
