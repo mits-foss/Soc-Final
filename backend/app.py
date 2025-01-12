@@ -27,9 +27,12 @@ def init_db():
         app.db_initialized = True
 
 @app.route('/login')
+
 def login():
+    db.setup_database()
+
     link = get_github_login_url()
-    return link
+    return redirect(get_github_login_url())
 
 @app.route('/callback')
 def callback():
@@ -41,7 +44,7 @@ def callback():
         token = get_github_token(code)
         ensure_db_connection()  # Ensure db.client is valid before use
         github_user = fetch_github_user(db.client, token)
-        logging.debug(f"GitHub user response: {github_user}")
+        # logging.debug(f"GitHub user response: {github_user}")
 
         # Check if the user is already logged in (based on session)
         if 'github_id' in session and session['github_id'] == github_user['login']:
@@ -63,7 +66,7 @@ def callback():
         session['temp_user'] = github_user
         session['temp_token'] = token
         print(session)
-        return token
+        return render_template('email_phone_form.html', github_user=github_user)
 
     except Exception as e:
         logging.error(f"OAuth callback error: {str(e)}")
@@ -90,12 +93,6 @@ def submit_user():
         
         db.save_user_to_db(github_user, email, phone, token,SOCname)
         
-        db.client.execute("""
-        INSERT INTO api_keys (key)
-        VALUES (?)
-        ON CONFLICT(key) DO NOTHING
-        
-        """, (token,))
         db.client.commit()
 
         # Clear temp session data

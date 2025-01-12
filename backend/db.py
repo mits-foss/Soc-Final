@@ -34,17 +34,14 @@ def setup_database():
     
     client.execute("""
     CREATE TABLE IF NOT EXISTS pull_requests (
-        id INTEGER PRIMARY KEY,
+        pr_id INTEGER PRIMARY KEY,
         repo_name TEXT NOT NULL,
         github_login TEXT NOT NULL,
         total_commits INTEGER DEFAULT 0,
         total_lines INTEGER DEFAULT 0,
         status TEXT DEFAULT 'open',
-        PRIMARY KEY (pr_id),
         FOREIGN KEY(github_login) REFERENCES users(github_id)
     );
-
-
     """)
     
     client.execute("""
@@ -58,14 +55,15 @@ def setup_database():
     );
     """)
     logging.debug("Database setup complete.")
+    
 def save_user_to_db(github_user, email, phone, token,SOCname):
     logging.debug(f"Checking if user exists: {github_user['login']}")
 
-def save_user_to_db(github_user, token):
     client.execute("""
-    INSERT OR REPLACE INTO users (github_id, name, email, token)
-    VALUES (?, ?, ?, ?)
-    """, (github_user['id'], github_user['login'], github_user.get('email', ''), token))
+INSERT OR REPLACE INTO users (github_id, name, email, phone_no, token)
+VALUES (?, ?, ?, ?, ?)
+""", (github_user['login'], SOCname, email, phone, token))
+
     
     client.commit()
 
@@ -95,15 +93,3 @@ def get_all_users():
             'repos': repo_details
         })
     return users
-
-def validate_tokens(client):
-    tokens = client.execute("SELECT key FROM api_keys").fetchall()[0]
-    for token in tokens:
-        response = requests.get(
-            "https://api.github.com/user",
-            headers={"Authorization": f"token {token[0]}"}
-        )
-        if response.status_code == 401:  
-            logging.warning(f"Removing invalid token: {token[0]}")
-        else:
-            logging.info(f"Token {token[0]} is valid.")

@@ -199,7 +199,7 @@ def insert_pull_request(client, pr, repo):
             repo,
             github_login,
             pr_details['commits'],
-            pr_details['additions'] - pr_details['deletions']
+            pr_details['additions'] + pr_details['deletions']
         ))
         logging.info(f"Inserted PR {pr['id']} by {github_login} for {repo}")
     else:
@@ -207,8 +207,8 @@ def insert_pull_request(client, pr, repo):
     
     client.commit()
 
-def fetch_pr_details(repo, pr_id, client, token):
-
+def fetch_pr_details(repo, pr_id, client):
+    token=CRON_TOKEN
     # Fetch all open PRs and match the pr_id manually
     url = f"https://api.github.com/repos/{repo}/pulls"
     headers = {
